@@ -45,7 +45,15 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
 
         void button_TouchUpInside(object sender, System.EventArgs e)
         {
-            moviePlayer = new MPMoviePlayerController(NSUrl.FromFilename(_videoSource));
+            string videoPath = _videoSource;
+            var url = NSUrl.FromFilename(videoPath);
+            Console.WriteLine(" 1 " + url.AbsoluteString);
+            if (!System.IO.File.Exists(videoPath))
+            {
+                url = NSUrl.FromString(videoPath);
+                Console.WriteLine(" 2 " + url.AbsoluteString);
+            }
+            moviePlayer = new MPMoviePlayerController(url);
             this.NativeView.AddSubview(moviePlayer.View);
             moviePlayer.SetFullscreen(true, true);
             moviePlayer.Play();
@@ -89,7 +97,6 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             {
                 url = NSUrl.FromString(videoPath);
 				Console.WriteLine (" 2 " + url.AbsoluteString);
-
             }
             var avAsset = AVAsset.FromUrl(url);
             AVAssetImageGenerator imageGenerator = AVAssetImageGenerator.FromAsset(avAsset);
