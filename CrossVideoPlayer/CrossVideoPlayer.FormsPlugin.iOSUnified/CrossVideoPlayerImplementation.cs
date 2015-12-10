@@ -8,6 +8,7 @@ using Foundation;
 using AVFoundation;
 using CoreMedia;
 using CoreGraphics;
+using AssetsLibrary;
 
 [assembly: ExportRenderer(typeof(CrossVideoPlayerView), typeof(CrossVideoPlayerRenderer))]
 
@@ -18,8 +19,9 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
     /// </summary>
     public class CrossVideoPlayerRenderer : ViewRenderer<CrossVideoPlayerView, UIButton>
     {
-
+        MPMoviePlayerController moviePlayer;
         private string _videoSource;
+        UIButton button;
         /// <summary>
         /// Used for registration with dependency service
         /// </summary>
@@ -32,28 +34,60 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             base.OnElementChanged(e);
             CrossVideoPlayerView inputView = e.NewElement ?? e.OldElement;
             _videoSource = inputView.VideoSource;
+            
+            button = new UIButton();
+            ImageFor(_videoSource, 500);
 
-            var button = new UIButton();
-            var image = ImageFor(_videoSource, 2000);
-            button.BackgroundColor = UIColor.FromWhiteAlpha(0.5f, 0.5f);
-            button.SetImage(image, UIControlState.Normal);
-            button.SetBackgroundImage(image, UIControlState.Normal);
             button.TouchUpInside += button_TouchUpInside;
             SetNativeControl(button);
         }
 
         void button_TouchUpInside(object sender, System.EventArgs e)
         {
-            var moviePlayer = new MPMoviePlayerController(NSUrl.FromFilename(_videoSource));
-
-            this.ViewController.View.AddSubview(moviePlayer.View);
+            moviePlayer = new MPMoviePlayerController(NSUrl.FromFilename(_videoSource));
+            this.NativeView.AddSubview(moviePlayer.View);
             moviePlayer.SetFullscreen(true, true);
             moviePlayer.Play();
         }
 
-        UIImage ImageFor(string videoPath, double time)
+        void ImageFor(string videoPath, double time)
         {
-            var avAsset = AVAsset.FromUrl(NSUrl.FromFilename(videoPath));
+            //if (!System.IO.File.Exists(videoPath))
+            //{
+            //    ALAssetsLibrary l = new ALAssetsLibrary();
+            //    l.AssetForUrl(NSUrl.FromString(videoPath), (ast) =>
+            //    {
+            //        var cg = ast.DefaultRepresentation.GetImage();
+            //        var image = new UIImage(cg);
+            //        button.SetImage(image, UIControlState.Normal);
+            //        button.SetBackgroundImage(image, UIControlState.Normal);
+            //    }, (err) => { });
+            //}
+            //else
+            //{
+            //    var avAsset = AVAsset.FromUrl(NSUrl.FromFilename(videoPath));
+            //    AVAssetImageGenerator imageGenerator = AVAssetImageGenerator.FromAsset(avAsset);
+            //    imageGenerator.AppliesPreferredTrackTransform = true;
+
+            //    CMTime actualTime;
+            //    NSError error = null;
+            //    var requestedTime = new CMTime((long)time, 100);
+            //    using (CGImage posterImage = imageGenerator.CopyCGImageAtTime(requestedTime, out actualTime, out error))
+            //    {
+            //        if (posterImage != null)
+            //        {
+            //            var image = UIImage.FromImage(posterImage);
+            //            button.SetImage(image, UIControlState.Normal);
+            //            button.SetBackgroundImage(image, UIControlState.Normal);
+            //        }
+            //    }
+            //}
+            var url = NSUrl.FromFilename(videoPath);
+            if (!System.IO.File.Exists(videoPath))
+            {
+                url = NSUrl.FromString(videoPath);
+            }
+            var avAsset = AVAsset.FromUrl(url);
             AVAssetImageGenerator imageGenerator = AVAssetImageGenerator.FromAsset(avAsset);
             imageGenerator.AppliesPreferredTrackTransform = true;
 
@@ -61,7 +95,14 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             NSError error = null;
             var requestedTime = new CMTime((long)time, 100);
             using (CGImage posterImage = imageGenerator.CopyCGImageAtTime(requestedTime, out actualTime, out error))
-                return UIImage.FromImage(posterImage);
+            {
+                if (posterImage != null)
+                {
+                    var image = UIImage.FromImage(posterImage);
+                    button.SetImage(image, UIControlState.Normal);
+                    button.SetBackgroundImage(image, UIControlState.Normal);
+                }
+            }
         }
     }
 }
