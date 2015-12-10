@@ -34,7 +34,7 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
         {
             base.OnElementChanged(e);
             CrossVideoPlayerView inputView = e.NewElement ?? e.OldElement;
-			//_videoSource = inputView.VideoSource.Replace("/var/","/private/var/");
+			_videoSource = inputView.VideoSource;
             
             button = new UIButton();
             ImageFor(_videoSource, 500);
@@ -107,11 +107,23 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             var requestedTime = new CMTime((long)time, 100);
             using (CGImage posterImage = imageGenerator.CopyCGImageAtTime(requestedTime, out actualTime, out error))
             {
-                if (posterImage != null)
+                //if (posterImage != null)
+                //{
+                //    var image = UIImage.FromImage(posterImage);
+                //    button.SetImage(image, UIControlState.Normal);
+                //    //button.SetBackgroundImage(image, UIControlState.Normal);
+                //}
+                //else
                 {
-                    var image = UIImage.FromImage(posterImage);
-                    button.SetImage(image, UIControlState.Normal);
-                    button.SetBackgroundImage(image, UIControlState.Normal);
+                    try
+                    {
+                        var image = UIImage.FromFile("playVideo.png");
+                        button.SetImage(image, UIControlState.Normal);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("ImageFor => " + ex.Message);
+                    }
                 }
             }
         }
