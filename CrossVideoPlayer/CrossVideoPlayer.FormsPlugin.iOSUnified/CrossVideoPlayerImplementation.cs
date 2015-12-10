@@ -107,13 +107,13 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             var requestedTime = new CMTime((long)time, 100);
             using (CGImage posterImage = imageGenerator.CopyCGImageAtTime(requestedTime, out actualTime, out error))
             {
-                //if (posterImage != null)
-                //{
-                //    var image = UIImage.FromImage(posterImage);
-                //    button.SetImage(image, UIControlState.Normal);
-                //    //button.SetBackgroundImage(image, UIControlState.Normal);
-                //}
-                //else
+                if (posterImage != null)
+                {
+                    var image = UIImage.FromImage(posterImage);
+                    button.SetImage(image, UIControlState.Normal);
+                    //button.SetBackgroundImage(image, UIControlState.Normal);
+                }
+                else
                 {
                     try
                     {
