@@ -9,6 +9,7 @@ using AVFoundation;
 using CoreMedia;
 using CoreGraphics;
 using AssetsLibrary;
+using System;
 
 [assembly: ExportRenderer(typeof(CrossVideoPlayerView), typeof(CrossVideoPlayerRenderer))]
 
@@ -33,7 +34,7 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
         {
             base.OnElementChanged(e);
             CrossVideoPlayerView inputView = e.NewElement ?? e.OldElement;
-            _videoSource = inputView.VideoSource;
+			_videoSource = inputView.VideoSource.Replace("/var/","/private/var/");
             
             button = new UIButton();
             ImageFor(_videoSource, 500);
@@ -83,9 +84,12 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
             //    }
             //}
             var url = NSUrl.FromFilename(videoPath);
-            if (!System.IO.File.Exists(videoPath))
+			Console.WriteLine (" 1 " +url.AbsoluteString);
+			if (!System.IO.File.Exists(videoPath))
             {
                 url = NSUrl.FromString(videoPath);
+				Console.WriteLine (" 2 " + url.AbsoluteString);
+
             }
             var avAsset = AVAsset.FromUrl(url);
             AVAssetImageGenerator imageGenerator = AVAssetImageGenerator.FromAsset(avAsset);
