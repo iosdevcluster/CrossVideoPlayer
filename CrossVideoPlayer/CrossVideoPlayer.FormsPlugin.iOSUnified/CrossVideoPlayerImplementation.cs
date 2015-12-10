@@ -34,7 +34,7 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
         {
             base.OnElementChanged(e);
             CrossVideoPlayerView inputView = e.NewElement ?? e.OldElement;
-			_videoSource = inputView.VideoSource.Replace("/var/","/private/var/");
+			//_videoSource = inputView.VideoSource.Replace("/var/","/private/var/");
             
             button = new UIButton();
             ImageFor(_videoSource, 500);
