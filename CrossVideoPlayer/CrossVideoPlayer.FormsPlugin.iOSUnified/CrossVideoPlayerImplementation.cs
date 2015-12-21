@@ -111,7 +111,19 @@ namespace CrossVideoPlayer.FormsPlugin.iOSUnified
                 {
                     var image = UIImage.FromImage(posterImage);
                     button.SetImage(image, UIControlState.Normal);
-                    button.SetBackgroundImage(image, UIControlState.Normal);
+                    //button.SetBackgroundImage(image, UIControlState.Normal);
+                }
+                else
+                {
+                    try
+                    {
+                        var image = UIImage.FromFile("playVideo.png");
+                        button.SetImage(image, UIControlState.Normal);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("ImageFor => " + ex.Message);
+                    }
                 }
             }
         }
